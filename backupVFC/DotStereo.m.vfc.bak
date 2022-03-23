@@ -1,0 +1,212 @@
+;  IRL FlowCode Version: Version 10.0
+;  c1995-2015: Visual Flow Coder by 2LResearch
+;
+;  File Name : DotStereo.m.vfc.bak
+;  File Date : 02:20:33 PM - 04:Apr:2019
+
+event(clear;);//
+set();//load('stereoParams.mat');
+set();//
+set();// SETUP PARAMETERS
+set();// addpath(genpath('E:\Users\luis\OneDrive\projects\stereocam\mex')
+set();// addpath(genpath('E:\Users\luis\OneDrive\projects\stereocam\Stereo3D\MeshFunctions')
+set(density = 4;);//
+set(delay = 2;);///
+set(mask_thresh = .6;);///
+set(use_dark = true;);//
+set(expo = -11;);//
+set(fname = [ 'dots.png' ] ;);//
+set([L, R] = stereoImread(  fname ););// stereo(0).acquire();
+set(s  = size( L););//
+set(RimageShift = [ 0, 6 ] ;);//
+set(R  = imtranslate( R,  RimageShift   ););//
+set(E = zeros( s(1), s(2) ););//
+set(L1 = zeros( s(1), 1 ););//
+set(R1 = zeros( s(1), 1 ););//
+set(d = zeros( s(1) ););//
+set(x = zeros( s(1) ););//
+set(v = 1;);//
+set(MAXDEPTH = 200;);//
+set(DEPTHSCALE = 20;);//
+set(steps = 1;);//steps= 10;
+set(d = zeros( s(1) ););//
+set(x = zeros( s(1) ););//
+set();//
+set();// MAIN
+set([ UPhaseL, WPhaseL, UPhaseR, WPhaseR  ] = getPhaseMap( ) ;);//
+output(fprintf( fname ););//
+set(thresh = .5;);//thresh = .1;
+set(bwL = im2bw( L , thresh ););//
+set(bwR = im2bw( R , thresh ););//
+set(figure(1); imshow( [ bwL bwR ] ); drawnow;);//
+event(tic);//
+set([ Xl, Yl, Pl, szl ] = getXYP ( bwL , WPhaseL ););//[ Xl, Yl, Pl, szl ] = getXYP ( bwL , UPhaseL );
+set([ Xr, Yr, Pr, szr ] = getXYP ( bwR , WPhaseR ););//[ Xr, Yr, Pr, szr ] = getXYP ( bwR , UPhaseR );
+set();//Pr = Pr - mod( Pr , pi/2 );
+set();//Pl = Pl - mod( Pl, pi/2);
+set();//Pl = Pl - mod( Pl, pi/2);
+event(cla;);// clear axis
+set(P1 = [ Yl , Pl ];);//
+set(P2 = [ Yr , Pr ];);//
+set();//
+set(C  = PointCorr( P1 , P2 ););//
+set(figure( 2 ); cla; hold on;);//
+loop(for i=1:length(C));//
+set(X1 = (Xl(C( i,1))) ;);//
+set(Y1 = (Yl(C( i,1))) ;);//
+set(P1 = (Pl(C( i,1))) ;);//
+set(X2 = (Xr(C( i,2))) ;);//
+set(Y2 = (Yr(C( i,2))) ;);//
+set(P2 = (Pr(C( i,2))) ;);//
+set(XX = [ X1 X2 ];);//
+set(YY = [ Y1 Y2 ];);//
+set(PP = [ P1 P2 ];);//
+set(line(XX,YY, PP) ;);//scatter( Yr, Pr, 'r' )
+set([ z, x ] = Get2DCoord( X1 ,  X2,  s  ););//  computes depth at x given the Left and Right eye corresponing values and s = size( image )
+set(y = Y1;);//  computes depth at x given the Left and Right eye corresponing values and s = size( image )
+set(V( i , : ) = [ x, y, z ];);//
+lend(end);//
+set(pc = pointCloud( V ););//
+set(pcwrite( pc, 'PC.ply' ););//
+set();//scatter( Yl, Pl, 'b' )
+set(scatter3( Xr,Yr,Pr, 'r' ) ; scatter3( Xl,Yl,Pl, 'b' ) ;);//
+event(hold off;);//
+set(figure(9); pcshow( pc, 'markersize', 50 ););//
+event(toc);//
+set(Rl = 5*ones( szl( 1 ), 1  ););//
+set(Rr = 5*ones( szr( 1 ), 1  ););//
+set(figure(1); imshow( [ L R ] ););//
+event(hold on;);//
+set(viscircles( [ Xl  ,  Yl  ], Rl  ,'Color', 'b' ););//
+set(viscircles( [ Xr + s(2) ,  Yr  ], Rr ,'Color', 'r' ););//
+event(hold off;);//
+set();//figure(2); plot( d ); drawnow;
+set();//V = V - min(V) ;
+set();////pc = pointCloud( V );//
+set();//pcwrite( pc, 'PC.ply' );
+set();//
+set();//
+
+input(function [ d, x ] = Get2DCoord( XL,  XR, s ));//  computes depth at x given the Left and Right eye corresponing values and s = size( image )
+branch();//
+path();//
+set(epsilon = .0000001;);//
+set(MAXD = 1500;);//
+set(NOMINALD = 0 ;);//
+set(ZSCALE = 9;);//
+set(T = 50;);// interocular
+set(view_angle = pi/3 ;);//
+set(F = (view_angle / 2) / (s(2)/2) ;);//  est inverse focal from est view angle
+set(cx = s(2)/2;);//
+set(ThetaL = pi/2 - atan( (XL-cx) * F ););//
+set(ThetaR = pi/2 - atan( (cx-XR) * F ););//
+set(d = T * sin(ThetaR) * sin( ThetaL ) / ( sin( ThetaL + ThetaR ) + epsilon ););//
+set(d = d*ZSCALE);//h = - d * sin( ThetaL ) / ( cos( ThetaR + ThetaL ) +epsilon );
+branch(if     abs(d) > MAXD);//
+path();//
+set();//
+set(d = NOMINALD;);//
+bend(end);//
+set();//d = SCALEDEPTH*d;
+set(x = double( XL ) + 1;);//x =  h;
+bend();//
+end(end);//
+
+input(function [ CorrArray ] = PointCorr( P1 , P2 ));//input 2 lists of points and output a corrArray of indcies of matched points
+branch();//
+path();//
+set(XTOL= 4 ;);//XTOL= 2;
+set(YTOL= 0.05 ;);//YTOL= 0.2 ;
+set();//maxD2 = XTOL*XTOL + YTOL*YTOL;
+set(N1 = length( P1 ););//
+set(N2 = length( P2 ););//
+set(E = zeros( N1 ,  N2 ););//
+set();//X0 = min(  [ min( P1(:,1)) , min( P2(:,1)) ]  );
+set();//X1 = max(  [ max( P1(:,1)) , max( P2(:,1)) ]  );
+set();//Y0 = min(  [ min( P1(:,2)) , min( P2(:,2)) ]  );
+set();//Y1 = max(  [ max( P1(:,2)) , max( P2(:,2)) ]  );
+set();//ystep = YTOL* (Y1 - Y0)/100;
+set(inx = 1;);//
+loop(for n1 = 1:N1);//for x = X0:X1
+set(x1 = P1(n1,1););//
+set(y1 = P1(n1,2););//
+loop(for  n2 = 1:N2);//for  y = Y0:Y1
+set(x2 = P2(n2,1););//
+set(y2 = P2(n2,2););//
+branch(if  abs(x2-x1) <= XTOL  && abs(y2-y1) <= YTOL);//
+path();//
+set();//
+set(E( n1, n2 ) = 1 / (y1-y2)^2 ;);//E( n1, n2 ) = 1 / ((x1-x2)^2 + (y1-y2)^2 + 0.001);
+set(inx= inx+1;);//
+bend(end);//
+lend(end);//
+lend(end);//
+set(k = 1;);//
+loop(for i=1:N1);//
+branch(if   nnz( E(i,:)  ) > 0);//
+path();//
+set();//
+set([t, j] = max( E(i,:) ));// ////
+set(CorrArray( k, : ) = [ i, j ];);//CorrArray( inx, : ) = [ n1, n2 , x1, x2 ];
+set(k = k + 1;);//
+bend(end);//
+lend(end);//
+bend();//
+end(end);//
+
+input(function [ UL, WL, UR, WR ] = getPhaseMap( ));//
+branch();//
+path();//
+set([ L1, R1 ] = stereoImread( 'F1.png'););/// //
+set([ L2, R2 ] = stereoImread( 'F2.png'););/// //
+set([ L3, R3 ] = stereoImread('F3.png'););/// //
+set(dL1 = double(L1););/// //
+set(dL2 = double(L2););/// //
+set(dL3 = double(L3););/// //
+set(dR1 = double(R1););//////
+set(dR2 = double(R2););/// //
+set(dR3 = double(R3););///// //
+set(WL = atan(sqrt(3) * (dL1 - dL3)./(2*dL2-dL1-dL3) ););//WL = 2*atan(sqrt(3) * (dL1 - dL3)./(2*dL2-dL1-dL3) );
+set(WL(isnan(WL)) = 0;);/// //
+set(UL = unwrap( WL' )';);/// //
+set(WR = atan(sqrt(3) * (dR1 - dR3)./(2*dR2-dR1-dR3) ););//WR = 2* atan(sqrt(3) * (dR1 - dR3)./(2*dR2-dR1-dR3) );
+set(WR(isnan(WR)) = 0;);///// //
+set(UR = unwrap( WR' )';);///// //
+bend();//
+end(end);//
+
+input(function [ X, Y, P, sz ] = getXYP ( BW , Phase ));//computes the image coordinates for a bw dot image and the phases at each point
+branch();//
+path();//
+set(stats = regionprops( 'table', BW, 'Centroid' ););//stats = regionprops('table', BW, 'Centroid', 'MajorAxisLength','MinorAxisLength')
+set();//[ y, x ]= find (bwL);
+set(sz = size(stats));//
+set(centers = stats.Centroid ;);//
+loop(for i=1:length(centers));//
+set(ix = round( centers(i,2)) ;);//
+set(iy = round( centers(i,1)) ;);//
+set(fx = centers(i,2) - ix ;);//
+set(fy = centers(i,1) - iy ;);//
+set(J(i) = Phase( ix , iy ););//
+lend(end);//
+set(P = J';);//
+set(X = centers( :, 1 ););//
+set(Y = centers( :, 2 ););//
+bend();//
+end(end);//
+
+input(function [L,R] = stereoImread( file ));//// //
+branch();//
+path();//
+set();// //STEREOIMREAD Summary of this function goes here //
+set();// //   Detailed explanation goes here //
+set(simg = imread( file ););/// //
+set(s = size( simg ););/// //
+set(R = simg(:,1+s(2)/2:s(2)););/// //
+set(L = simg(:,1:s(2)/2););/// //
+bend();//
+end(end);////// //
+set();//  Export  Date: 02:13:10 PM - 04:Apr:2019.
+set();//
+
+
