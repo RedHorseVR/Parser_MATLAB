@@ -11,14 +11,20 @@ sub LoadFileAsString {
 		tr/\t/ /;
 		$keyfile = "$keyfile$_";
 		}
+	
 	close ( FILE );
 	$keyfile; }
 # main
 	$cmd_line = $ENV{'QUERY_STRING'} ;
 	($cmd_line) = @ARGV;
 	$outputVFC =  "$cmd_line.vfc" ;
+	if ( $cmd_line == '' )
+	{
+		$cmd_line = "DotStereo.m" ;
+		print( STDOUT  "Using defaut test input=  $file  ...  \n" );
+	}else{
+		}
 	$file = $cmd_line ;
-	print( STDOUT  "listening and autoparse for file =  $cmd_line  ...  \n" );
 	$lasttime = 0;
 	while( $I < 1 ) {
 		$I = $I+1;
@@ -35,6 +41,8 @@ sub LoadFileAsString {
 		
 		select(undef, undef, undef, 0.25);
 		}
+	
+	print "DONE... $I\n";
 	
 sub Parse{
 	open OUTFILE,  ">" ,   $outputVFC  or die "Cannot open output.txt: $!";
@@ -101,6 +109,7 @@ sub Parse{
 		$line = "";
 		$lastcount = $count;
 		}
+	
 	close ( FILE );
 	
 	$stack_value = pop( @stack );
@@ -109,6 +118,7 @@ sub Parse{
 		$ParsedFile  = "$ParsedFile$line\n";
 		$stack_value = pop( @stack );
 		}
+	
 	print( OUTFILE $ParsedFile );
 	printFooter( );
 	close ( OUTFILE );
@@ -125,5 +135,5 @@ sub printFooter{
 	print( OUTFILE  "A EMBEDDED ALTSESSION INFORMATION\n");
 	print( OUTFILE  "; 261 572 704 1329 31 130   395   4294966789    MATLAB.key  0");
 	}
-#  Export  Date: 02:18:08 PM - 04:Apr:2019.
+#  Export  Date: 10:03:09 AM - 05:Jun:2022.
 

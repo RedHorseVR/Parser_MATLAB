@@ -2,7 +2,7 @@
 ;  c1995-2015: Visual Flow Coder by 2LResearch
 ;
 ;  File Name : MatlabParser.pl.vfc
-;  File Date : 02:18:08 PM - 04:Apr:2019
+;  File Date : 10:03:09 AM - 05:Jun:2022
 
 
 input(#use);//////
@@ -25,9 +25,14 @@ end($keyfile; });//
 input(# main);// 
 process($cmd_line = $ENV{'QUERY_STRING'} ;);//GetParams();
 process(  ($cmd_line) = @ARGV;);//$cmd_line = $ENV{'QUERY_STRING'} ;
-process($outputVFC =  "$cmd_line.vfc" ;);//$cmd_line = $ENV{'QUERY_STRING'} ;
-set($file = $cmd_line ;);//
-output(print( STDOUT  "listening and autoparse for file =  $cmd_line  ...  \n" ););//
+process($outputVFC =  "$cmd_line.vfc" ;);//<<<< output file
+branch(if ( $cmd_line == '' ));//
+path( {);//
+set($cmd_line = "DotStereo.m" ;);//<<< defualt test input file
+output(print( STDOUT  "Using defaut test input=  $file  ...  \n" ););//
+path( }else{);//
+bend( });//
+set($file = $cmd_line ;);//<<< input file
 generic($lasttime = 0;);//$lasttime = stat($file)->mtime;
 loop(while( $I < 1 ) {);//
 set($I = $I+1;);//
@@ -44,6 +49,7 @@ bend( });//
 set();//usleep( 300 );
 generic(select(undef, undef, undef, 0.25););//# Sleep for 250 milliseconds
 lend(});//
+output(print "DONE... $I\n";);//
 end();//
 
 input(sub Parse{);//
@@ -144,4 +150,4 @@ end( });//
 ;    MatlabParser.pl   #   .
 ; notepad++
 ;INSECTA EMBEDDED ALTSESSION INFORMATION
-; 1186 524 1134 314 109 150   370   4294964145    perl.key  0
+; 899 616 1377 1381 109 150   686   4294966059    perl.key  0
