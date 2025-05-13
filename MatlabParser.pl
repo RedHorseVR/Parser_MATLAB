@@ -16,41 +16,31 @@ sub LoadFileAsString {
 	$keyfile; }
 # main
 	$cmd_line = $ENV{'QUERY_STRING'} ;
-	($cmd_line) = @ARGV;
-	$outputVFC =  "$cmd_line.vfc" ;
-	if ( $cmd_line == '' )
+	$cmd_line = $ARGV[0];
+	print "\n----------------------------------\nCMD INPUT:  $cmd_line\n";
+	if ( $cmd_line eq  "" )
 	{
-		$cmd_line = "DotStereo.m" ;
-		print( STDOUT  "Using defaut test input=  $file  ...  \n" );
+		$cmd_line = "mtest/DotStereo.m" ;
+		print( STDOUT  "\n...Using defaut test input=  $cmd_line  ...  \n" );
 	}else{
 		}
 	$file = $cmd_line ;
 	$lasttime = 0;
-	while( $I < 1 ) {
-		$I = $I+1;
-		$nowtime = stat($file)->mtime;
-		
-		
-		if ( $nowtime != $lasttime )
-		{
-			Parse();
-			$lasttime = stat($file)->mtime;
-			print( STDOUT  "\nlistening and autoparse for file =  $cmd_line  ...  \n" );
-		}else{
-			}
-		
-		select(undef, undef, undef, 0.25);
-		}
-	
+	Parse();
 	print "DONE... $I\n";
-	
+	exit ;
 sub Parse{
+	$outputVFC =  "$cmd_line.vfc" ;
 	open OUTFILE,  ">" ,   $outputVFC  or die "Cannot open output.txt: $!";
 	open( FILE, $cmd_line );
+	print( STDOUT  "\nINPUT FILE  =  $cmd_line  ...  \n" );
+	print( STDOUT  "OUTPUT FILE  =  $outputVFC ...  \n" );
 	my @stack;
 	$lastcount = 0;
 	$ParsedFile  = "";
 	while(<FILE>) {
+		
+		
 		
 		s/\n//;
 		$str = $_;
@@ -73,6 +63,7 @@ sub Parse{
 			}
 		
 		$line ="set($_);\//$comment";
+		
 		
 		if( $_ =~ m/^\s*(function|class)\b/ )
 		{
@@ -122,8 +113,6 @@ sub Parse{
 	print( OUTFILE $ParsedFile );
 	printFooter( );
 	close ( OUTFILE );
-	print(  "E:\\VFC1.0\\vfc2000 $outputVFC -Reload" );
-	system(  "E:\\VFC1.0\\vfc2000 $outputVFC -Reload" );
 	}
 sub printFooter{
 	print( OUTFILE  ";INSECT" );
@@ -135,5 +124,5 @@ sub printFooter{
 	print( OUTFILE  "A EMBEDDED ALTSESSION INFORMATION\n");
 	print( OUTFILE  "; 261 572 704 1329 31 130   395   4294966789    MATLAB.key  0");
 	}
-#  Export  Date: 10:03:09 AM - 05:Jun:2022.
+#  Export  Date: 10:15:09 AM - 13:May:2025.
 

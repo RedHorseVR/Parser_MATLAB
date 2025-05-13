@@ -2,7 +2,7 @@
 ;  c1995-2015: Visual Flow Coder by 2LResearch
 ;
 ;  File Name : MatlabParser.pl.vfc
-;  File Date : 10:15:09 AM - 13:May:2025
+;  File Date : 08:55:56 AM - 13:May:2025
 
 
 input(#use);//////
@@ -24,33 +24,29 @@ end($keyfile; });//
 
 input(# main);// 
 process($cmd_line = $ENV{'QUERY_STRING'} ;);//GetParams();
-process($cmd_line = $ARGV[0];);//
-output(print "\n----------------------------------\nCMD INPUT:  $cmd_line\n";);//
-branch(if ( $cmd_line eq  "" ));//
+process(  ($cmd_line) = @ARGV;);//$cmd_line = $ENV{'QUERY_STRING'} ;
+process($outputVFC =  "$cmd_line.vfc" ;);//<<<< output file
+output(print( STDOUT  "PARSING =  $outputVFC ...  \n" ););//
+branch(if ( $cmd_line == '' ));//
 path( {);//
-set($cmd_line = "mtest/DotStereo.m" ;);//<<< defualt test input file
-output(print( STDOUT  "\n...Using defaut test input=  $cmd_line  ...  \n" ););//
+set($cmd_line = "DotStereo.m" ;);//<<< defualt test input file
+output(print( STDOUT  "Using defaut test input=  $file  ...  \n" ););//
 path( }else{);//
 bend( });//
 set($file = $cmd_line ;);//<<< input file
 generic($lasttime = 0;);//$lasttime = stat($file)->mtime;
 process(Parse(););//
 output(print "DONE... $I\n";);//
-end(exit ;);//
+end(exit;);//
 
 input(sub Parse{);//
-process($outputVFC =  "$cmd_line.vfc" ;);//<<<< output file
 output(open OUTFILE,  ">" ,   $outputVFC  or die "Cannot open output.txt: $!";);//
 set(  open( FILE, $cmd_line ););//
-output(print( STDOUT  "\nINPUT FILE  =  $cmd_line  ...  \n" ););//
-output(print( STDOUT  "OUTPUT FILE  =  $outputVFC ...  \n" ););//
 set(my @stack;);//
 generic($lastcount = 0;);// ////
 set(  $ParsedFile  = "";);//
 loop(  while(<FILE>) {);//
 set();//s/^\t/    /;
-generic();//chomp; 
-output();//print( STDOUT  "------> $_\n" );
 set(s/\n//;);//
 set($str = $_;);//
 generic($str =~ /^\t*/;);//
@@ -72,7 +68,6 @@ set($comment = "";);//$comment = "+";
 bend( });//
 output();//print( "\t------ $comment \n" );
 set($line ="set($_);\//$comment";);//
-output();//print( STDOUT  "------> $line\n" );
 set();//
 branch(if( $_ =~ m/^\s*(function|class)\b/ ));//
 path( {);//
@@ -120,6 +115,8 @@ lend( });//////
 output(print( OUTFILE $ParsedFile ););//
 process(printFooter( ););//
 generic(  close ( OUTFILE ););//
+output();//print(  "E:\\VFC1.0\\vfc2000 $outputVFC -Reload" );
+output();//system(  "E:\\VFC1.0\\vfc2000 $outputVFC -Reload" );
 end( });// 
 
 input(sub printFooter{);//
@@ -140,4 +137,4 @@ end( });//
 ;    MatlabParser.pl   #   .
 ; notepad++
 ;INSECTA EMBEDDED ALTSESSION INFORMATION
-; 2093 4294967225 868 854 20 169   480   4294966365    perl.key  0
+; 599 54 1338 971 30 129   539   4294963998    perl.key  0
