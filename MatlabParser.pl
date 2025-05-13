@@ -31,7 +31,7 @@ sub LoadFileAsString {
 	exit ;
 sub Parse{
 	$outputVFC =  "$cmd_line.vfc" ;
-	open OUTFILE,  ">" ,   $outputVFC  or die "Cannot open output.txt: $!";
+	open OUTFILE,  ">" ,   $outputVFC  or die "Cannot open $outputVFC !\n";
 	open( FILE, $cmd_line );
 	print( STDOUT  "\nINPUT FILE  =  $cmd_line  ...  \n" );
 	print( STDOUT  "OUTPUT FILE  =  $outputVFC ...  \n" );
@@ -124,5 +124,5 @@ sub printFooter{
 	print( OUTFILE  "A EMBEDDED ALTSESSION INFORMATION\n");
 	print( OUTFILE  "; 261 572 704 1329 31 130   395   4294966789    MATLAB.key  0");
 	}
-#  Export  Date: 10:15:09 AM - 13:May:2025.
+#  Export  Date: 11:13:27 AM - 13:May:2025.
 
