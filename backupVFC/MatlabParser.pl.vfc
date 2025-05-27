@@ -1,0 +1,140 @@
+;  IRL FlowCode Version: Version 10.0
+;  c1995-2015: Visual Flow Coder by 2LResearch
+;
+;  File Name : MatlabParser.pl.vfc
+;  File Date : 08:55:56 AM - 13:May:2025
+
+
+input(#use);//////
+set();//
+generic(use File::stat qw(stat););//
+end();//
+
+input(sub LoadFileAsString {);//
+output(local ( $file ) = @_;);//
+output(local ( $keyfile ) ;);//
+set(  open( FILE, $file ););//
+loop(  while(<FILE>) {);//
+set(s/^ *\n//;);//
+set(tr/\t/ /;);//
+set(  $keyfile = "$keyfile$_";);//
+lend(  });//# End of SEARCHFILE
+generic(  close ( FILE ););//
+end($keyfile; });//
+
+input(# main);// 
+process($cmd_line = $ENV{'QUERY_STRING'} ;);//GetParams();
+process(  ($cmd_line) = @ARGV;);//$cmd_line = $ENV{'QUERY_STRING'} ;
+process($outputVFC =  "$cmd_line.vfc" ;);//<<<< output file
+output(print( STDOUT  "PARSING =  $outputVFC ...  \n" ););//
+branch(if ( $cmd_line == '' ));//
+path( {);//
+set($cmd_line = "DotStereo.m" ;);//<<< defualt test input file
+output(print( STDOUT  "Using defaut test input=  $file  ...  \n" ););//
+path( }else{);//
+bend( });//
+set($file = $cmd_line ;);//<<< input file
+generic($lasttime = 0;);//$lasttime = stat($file)->mtime;
+process(Parse(););//
+output(print "DONE... $I\n";);//
+end(exit;);//
+
+input(sub Parse{);//
+output(open OUTFILE,  ">" ,   $outputVFC  or die "Cannot open output.txt: $!";);//
+set(  open( FILE, $cmd_line ););//
+set(my @stack;);//
+generic($lastcount = 0;);// ////
+set(  $ParsedFile  = "";);//
+loop(  while(<FILE>) {);//
+set();//s/^\t/    /;
+set(s/\n//;);//
+set($str = $_;);//
+generic($str =~ /^\t*/;);//
+generic($count = 1+length( $1 ););//  GET THE WHITE SPACE COUNTS
+set(s/^\s*//;);//
+set($comment = "$_";);//
+output();//print( "------ $comment \n" );
+set(s/%.*$//;);//PROCESS COMMENTS
+branch(if ( $comment =~ s/^.*%{1}//  ));//
+path( {);//
+branch(if ( $comment =~ m/^end/ ));//
+path( {);//
+set($line ="end($_);\//$comment";);//
+path( }else{);//
+set($line ="set($_);\//$comment";);//
+bend( });//
+path(} else {);//
+set($comment = "";);//$comment = "+";
+bend( });//
+output();//print( "\t------ $comment \n" );
+set($line ="set($_);\//$comment";);//
+set();//
+branch(if( $_ =~ m/^\s*(function|class)\b/ ));//
+path( {);//
+set($line ="input($_);\//$comment";);//
+set(  $ParsedFile  = "$ParsedFile$line\n";);//
+set($line ="branch();";);//
+process(push( @stack, "bendend" ););//
+path(}  if ( m/^\s*end\b/  )  {);//POP THE STACK
+process($stack_value = pop( @stack ););//
+branch(if ( $stack_value =~ s/bendend/bend/ ));//
+path( {);//
+set($line ="bend();";);//
+set(  $ParsedFile  = "$ParsedFile$line\n";);//
+set($line ="end($_);\//$comment";);//
+path( }else{);//
+set($line ="$stack_value($_);\//$comment";);//
+bend( });//
+path(} if(   m/^\s*(clear|cla|tic|toc|hold)\b/  )  {);//
+set($line ="event($_);\//$comment";);//
+path(} if(   m/^\s*(fprintf|imshow)\b/  )  {);//
+set($line ="output($_);\//$comment";);//
+path(} if(   m/^\s*(while|for)\b/  )  {);//
+set($line ="loop($_);\//$comment";);//
+process(push( @stack, "lend" ););//
+path(} if(   m/^\s*(if)\b/  )  {);//
+set($line ="branch($_);\//$comment";);//
+process(push( @stack, "bend" ););//
+path(} if(   m/^\s*(else)\b/  )  {);//
+set($line ="path($_);\//$comment";);//
+path(} if(   m/^\s*(break|continue|return)\b/  )  {);//
+set($line ="end($_);\//$comment";);//
+bend( });//
+set(  $ParsedFile  = "$ParsedFile$line\n";);//
+set($line = "";);//
+generic($lastcount = $count;);// ////
+lend(  });//# End of SEARCHFILE
+generic(  close ( FILE ););//
+output();//print( $ParsedFile );
+process($stack_value = pop( @stack ););//
+loop(while( $stack_value  ) {);//////
+set($line ="$stack_value();";);//
+set(  $ParsedFile  = "$ParsedFile$line\n";);//
+process($stack_value = pop( @stack ););//
+lend( });//////
+output(print( OUTFILE $ParsedFile ););//
+process(printFooter( ););//
+generic(  close ( OUTFILE ););//
+output();//print(  "E:\\VFC1.0\\vfc2000 $outputVFC -Reload" );
+output();//system(  "E:\\VFC1.0\\vfc2000 $outputVFC -Reload" );
+end( });// 
+
+input(sub printFooter{);//
+generic(print( OUTFILE  ";INSECT" ););// ////
+generic(print( OUTFILE  "A EMBEDDED SESSION INFORMATION\n" ););// ////
+generic(print( OUTFILE  "; 0 13158600 0 0 13158600 16711808 10485760 16777215 0 0 0 0 12632256 \n"););//
+generic(print( OUTFILE  "$file   #\"\"\"  #\"\"\"  \n"););//
+generic(print( OUTFILE  "; notepad++.exe \n"););//
+generic(print( OUTFILE  ";INSECT" ););// ////
+generic(print( OUTFILE  "A EMBEDDED ALTSESSION INFORMATION\n"););//
+generic(print( OUTFILE  "; 261 572 704 1329 31 130   395   4294966789    MATLAB.key  0"););//
+end( });//
+
+
+
+;INSECTA EMBEDDED SESSION INFORMATION
+; 255 16777215 65280 16777088 16711680 16777215 12632256 0 255 255 65535 65280 3289700
+;    MatlabParser.pl   #   .
+; notepad++
+;INSECTA EMBEDDED ALTSESSION INFORMATION
+; 599 54 1338 971 30 129   539   4294963998    perl.key  0

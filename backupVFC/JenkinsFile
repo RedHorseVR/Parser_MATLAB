@@ -1,0 +1,11 @@
+Jenkinsfile (Declarative Pipeline)
+pipeline {
+    agent { docker { image 'perl' } }
+    stages {
+        stage('build') {
+            steps {
+                bat 'compile.bat  MatlabParser.pl'
+            }
+        }
+    }
+}
