@@ -2,7 +2,7 @@
 ;  c1995-2015: Visual Flow Coder by 2LResearch
 ;
 ;  File Name : MatlabParser.pl.vfc
-;  File Date : 11:13:27 AM - 13:May:2025
+;  File Date : 01:55:35 PM - 17:Jul:2025
 
 
 input(#use);//////
@@ -58,8 +58,8 @@ generic($count = 1+length( $1 ););//  GET THE WHITE SPACE COUNTS
 set(s/^\s*//;);//
 set($comment = "$_";);//
 output();//print( "------ $comment \n" );
-set(s/%.*$//;);//PROCESS COMMENTS
-branch(if ( $comment =~ s/^.*%{1}//  ));//
+set(s/^%.*$//;);//PROCESS COMMENTS
+branch(if ( $comment =~ s/^%{1}//  ));//
 path( {);//
 branch(if ( $comment =~ m/^end/ ));//
 path( {);//
@@ -140,4 +140,4 @@ end( });//
 ;    MatlabParser.pl   #   .
 ; notepad++
 ;INSECTA EMBEDDED ALTSESSION INFORMATION
-; 2068 4294967101 1166 1293 33 169   555   4294965801    perl.key  0
+; 65 231 1061 678 51 138   467   4294965023    perl.key  0

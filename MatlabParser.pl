@@ -49,8 +49,8 @@ sub Parse{
 		s/^\s*//;
 		$comment = "$_";
 		
-		s/%.*$//;
-		if ( $comment =~ s/^.*%{1}//  )
+		s/^%.*$//;
+		if ( $comment =~ s/^%{1}//  )
 		{
 			if ( $comment =~ m/^end/ )
 			{
@@ -124,5 +124,5 @@ sub printFooter{
 	print( OUTFILE  "A EMBEDDED ALTSESSION INFORMATION\n");
 	print( OUTFILE  "; 261 572 704 1329 31 130   395   4294966789    MATLAB.key  0");
 	}
-#  Export  Date: 11:13:27 AM - 13:May:2025.
+#  Export  Date: 01:55:35 PM - 17:Jul:2025.
 
