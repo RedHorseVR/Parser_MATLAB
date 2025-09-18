@@ -22,3 +22,4 @@ for %%F in (%*) do (
     REM some_command "%%F"
 )
 
+pause

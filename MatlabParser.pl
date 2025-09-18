@@ -88,9 +88,16 @@ sub Parse{
 		} if(   m/^\s*(while|for)\b/  )  {
 			$line ="loop($_);\//$comment";
 			push( @stack, "lend" );
+		} if(   m/^\s*(switch)\b/  )  {
+			$line ="branch($_);\//$comment";
+			push( @stack, "bend" );
+			
+		} if(   m/^\s*(case|otherwise)\b/  )  {
+			$line ="path($_);\//$comment";
 		} if(   m/^\s*(if)\b/  )  {
 			$line ="branch($_);\//$comment";
 			push( @stack, "bend" );
+			
 		} if(   m/^\s*(else)\b/  )  {
 			$line ="path($_);\//$comment";
 		} if(   m/^\s*(break|continue|return)\b/  )  {
@@ -124,5 +131,8 @@ sub printFooter{
 	print( OUTFILE  "A EMBEDDED ALTSESSION INFORMATION\n");
 	print( OUTFILE  "; 261 572 704 1329 31 130   395   4294966789    MATLAB.key  0");
 	}
-#  Export  Date: 01:55:35 PM - 17:Jul:2025.
+
+
+
+
 
