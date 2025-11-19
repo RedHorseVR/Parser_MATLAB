@@ -83,7 +83,7 @@ sub Parse{
 				}
 		} if(   m/^\s*(clear|cla|tic|toc|hold)\b/  )  {
 			$line ="event($_);\//$comment";
-		} if(   m/^\s*(fprintf|imshow)\b/  )  {
+		} if(   m/^\s*(fprintf|imshow|disp)\b/  )  {
 			$line ="output($_);\//$comment";
 		} if(   m/^\s*(while|for)\b/  )  {
 			$line ="loop($_);\//$comment";
