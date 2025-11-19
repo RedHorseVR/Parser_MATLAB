@@ -94,6 +94,12 @@ sub Parse{
 			
 		} if(   m/^\s*(case|otherwise)\b/  )  {#////////
 			$line ="path($_);\//$comment";
+		} if(   m/^\s*(try)\b/  )  {
+			$line ="branch($_);\//$comment";
+			push( @stack, "bend" );
+			
+		} if(   m/^\s*(catch)\b/  )  { 
+			$line ="path($_);\//$comment";
 		} if(   m/^\s*(if)\b/  )  {
 			$line ="branch($_);\//$comment";
 			push( @stack, "bend" );
@@ -133,7 +139,6 @@ sub printFooter{
 	print( OUTFILE  "A EMBEDDED ALTSESSION INFORMATION\n");
 	print( OUTFILE  "; 261 572 704 1329 31 130   395   4294966789    MATLAB.key  0");
 	}
-
 
 
 
