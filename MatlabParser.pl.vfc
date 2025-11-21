@@ -2,11 +2,13 @@
 ;  c1995-2015: Visual Flow Coder by 2LResearch
 ;
 ;  File Name : MatlabParser.pl.vfc
-;  File Date : 11:19:27 AM - 19:Nov:2025
+;  File Date : 10:00:07 AM - 21:Nov:2025
 
 
 input(#use);//////
 set();//
+event();//use strict;
+event(use warnings;);// ////
 generic(use File::stat qw(stat););//
 end();//
 
@@ -38,20 +40,38 @@ process(Parse(););//
 output(print "DONE... $I\n";);//
 end(exit ;);//
 
+input(sub read_clean_lines {);//
+generic(my ($filename) = @_;);// ////
+generic(open(my $fh, '<', $filename) or die "Cannot open $filename: $!";);// ////
+generic();// // Slurp the whole file//
+generic(local $/ = undef;);// ////
+generic(my $content = <$fh>;);// ////
+generic(close($fh););// ////
+generic();// // Remove all non-ASCII characters//
+generic($content =~ s/[^\x00-\x7F]//g;);// ////
+generic();// // Normalize line endings (\r\n, \r ? \n)//
+generic($content =~ s/\r\n?/\n/g;);// ////
+generic();// // Split into array of lines//
+generic(my @lines = split /\n/, $content;);// ////
+end(return @lines;);// ////
+end(});// 
+
 input(sub Parse{);//
 process($outputVFC =  "$cmd_line.vfc" ;);//<<<< output file
 output(open OUTFILE,  ">" ,   $outputVFC  or die "Cannot open $outputVFC !\n";);//
-set(  open( FILE, $cmd_line ););//
+set();//  open( FILE, $cmd_line );
 output(print( STDOUT  "\nINPUT FILE  =  $cmd_line  ...  \n" ););//
 output(print( STDOUT  "OUTPUT FILE  =  $outputVFC ...  \n" ););//
 set(my @stack;);//
 generic($lastcount = 0;);// ////
 set(  $ParsedFile  = "";);//
-loop(  while(<FILE>) {);//
+event(my @lines = read_clean_lines( $cmd_line  ););// ////
+loop(foreach (@lines) {);//  while(<FILE>) {
 set();//s/^\t/    /;
 generic();//chomp; 
-output();//print( STDOUT  "------> $_\n" );
+output(print( STDOUT  "------> $_\n" ););//
 set(s/\n//;);//
+event();//my $input = <STDIN>;
 set($str = $_;);//
 generic($str =~ /^\t*/;);//
 generic($count = 1+length( $1 ););//  GET THE WHITE SPACE COUNTS
@@ -77,9 +97,9 @@ set();//
 branch(if( $_ =~ m/^\s*(function|class)\b/ ));//
 path( {);//
 set($line ="input($_);\//$comment";);//
-set(  $ParsedFile  = "$ParsedFile$line\n";);//
-set($line ="branch();";);//
-process(push( @stack, "bendend" ););//
+set();//  $ParsedFile  = "$ParsedFile$line\n";
+set();//$line ="branch();";
+process();//push( @stack, "bendend" );
 path(}  if ( m/^\s*end\b/  )  {);//POP THE STACK
 process($stack_value = pop( @stack ););//
 branch(if ( $stack_value =~ s/bendend/bend/ ));//
@@ -159,4 +179,4 @@ set();//
 ;    MatlabParser.pl   #   .
 ; notepad++
 ;INSECTA EMBEDDED ALTSESSION INFORMATION
-; 524 762 3014 925 85 138   4294966617   4294964534    perl.key  0
+; 130 827 1426 1157 85 127   702   4294964629    perl.key  0

@@ -1,5 +1,7 @@
 #use#////
 	
+	#use strict;
+	use warnings;# ////
 	use File::stat qw(stat);
 	
 sub LoadFileAsString {
@@ -29,20 +31,37 @@ sub LoadFileAsString {
 	Parse();
 	print "DONE... $I\n";
 	exit ;
+sub read_clean_lines {
+	my ($filename) = @_;# ////
+	open(my $fh, '<', $filename) or die "Cannot open $filename: $!";# ////
+	# // Slurp the whole file//
+	local $/ = undef;# ////
+	my $content = <$fh>;# ////
+	close($fh);# ////
+	# // Remove all non-ASCII characters//
+	$content =~ s/[^\x00-\x7F]//g;# ////
+	# // Normalize line endings (\r\n, \r ? \n)//
+	$content =~ s/\r\n?/\n/g;# ////
+	# // Split into array of lines//
+	my @lines = split /\n/, $content;# ////
+	return @lines;# ////
+} 
 sub Parse{
 	$outputVFC =  "$cmd_line.vfc" ;#<<<< output file
 	open OUTFILE,  ">" ,   $outputVFC  or die "Cannot open $outputVFC !\n";
-	open( FILE, $cmd_line );
+	#  open( FILE, $cmd_line );
 	print( STDOUT  "\nINPUT FILE  =  $cmd_line  ...  \n" );
 	print( STDOUT  "OUTPUT FILE  =  $outputVFC ...  \n" );
 	my @stack;
 	$lastcount = 0;# ////
 	$ParsedFile  = "";
-	while(<FILE>) {
+	my @lines = read_clean_lines( $cmd_line  );# ////
+	foreach (@lines) {#  while(<FILE>) {
 		#s/^\t/    /;
 		#chomp; 
-		#print( STDOUT  "------> $_\n" );
+		print( STDOUT  "------> $_\n" );
 		s/\n//;
+		#my $input = <STDIN>;
 		$str = $_;
 		$str =~ /^\t*/;
 		$count = 1+length( $1 );#  GET THE WHITE SPACE COUNTS
@@ -68,9 +87,9 @@ sub Parse{
 		if( $_ =~ m/^\s*(function|class)\b/ )
 		{
 			$line ="input($_);\//$comment";
-			$ParsedFile  = "$ParsedFile$line\n";
-			$line ="branch();";
-			push( @stack, "bendend" );
+			#  $ParsedFile  = "$ParsedFile$line\n";
+			#$line ="branch();";
+			#push( @stack, "bendend" );
 		}  if ( m/^\s*end\b/  )  {#POP THE STACK
 			$stack_value = pop( @stack );
 			if ( $stack_value =~ s/bendend/bend/ )
